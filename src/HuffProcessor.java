@@ -45,10 +45,19 @@ public class HuffProcessor {
 	public void compress(BitInputStream in, BitOutputStream out){
 
 		int[] counts = readForCounts(in);
+		if (myDebugLevel >= DEBUG_HIGH) {
+			System.out.println("codings created:");
+			for (int k=0; k<counts.length; k++) {
+				if (counts[k]<=0) continue;
+				System.out.println((char) k + ": " + counts[k]);
+			}
+			System.out.println();
+		}
+		
 		HuffNode root = makeTreeFromCounts(counts);
 		String[] codings = makeCodingsFromTree(root);
 		
-		out.writeBits(BITS_PER_INT, HUFF_TREE);
+		//out.writeBits(BITS_PER_INT, HUFF_TREE);
 		writeHeader(root, out);
 		
 		in.reset();
@@ -103,7 +112,7 @@ public class HuffProcessor {
 	}
 
 	private void writeHeader(HuffNode root, BitOutputStream out) {
-		out.writeBits(HUFF_NUMBER, HUFF_TREE);
+		out.writeBits(BITS_PER_INT, HUFF_TREE);
 		writeTree(root,out);
 	}
 	
